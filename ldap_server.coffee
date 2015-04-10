@@ -64,8 +64,8 @@ class UserQuery
         authenticateFuture.return false 
       return
     success = authenticateFuture.wait() 
-    # if not success or password == ''
-    #   throw new (Meteor.Error)(403, 'Invalid credentials')
+    if not success or password == ''
+      throw new (Meteor.Error)(403, 'Invalid credentials')
     @autenticated = success
     return success
 
