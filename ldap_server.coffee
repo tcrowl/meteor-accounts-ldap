@@ -110,23 +110,25 @@ class UserQuery
                 console.log(groupName, 'isMemberOf', isMember)
                 callback(groupName,isMember)
           # console.log @userObj.dn + ' isMemberOf ' + groupName + ': ' + isMember
-        
 
-Meteor.methods loginWithLdap: (request) ->
+
+Accounts.registerLoginHandler 'ldap', (request) ->
   console.log 'Setting up LDAP connection'
+  if !Meteor.settings.ldap
+    throw new Error('LDAP settings missing.')
 
-  # create query
+  # 1. create query
   user_query = new UserQuery(request.username)
 
   console.log 'LDAP authentication for ' + request.username
 
   user_query.findUser() # Allows both sAMAccountName and email
-  # 3. authenticate user
+  # 2. authenticate user
   authenticated = user_query.authenticate(request.password)
   
   console.log('* AUTENTICATED:',authenticated)
- 
-  # update meteor
+
+  # 3. update database
   userId = undefined
   userObj = user_query.userObj
   user = Meteor.users.findOne(dn: userObj.dn)
@@ -140,8 +142,10 @@ Meteor.methods loginWithLdap: (request) ->
       forLoggedInUser: Meteor.settings.ldap.autopublishFields
       forOtherUsers: Meteor.settings.ldap.autopublishFields
   stampedToken = Accounts._generateStampedLoginToken()
-  Meteor.users.update userId, $push: 'services.resume.loginTokens': stampedToken
-
+  hashStampedToken = Accounts._hashStampedToken(stampedToken)
+  Meteor.users.update userId, $push: 'services.resume.loginTokens': hashStampedToken
+  
+  # 4. update membership of groups (asynchronously, as this can be really slow)
   user_query.queryMembershipAndAddToMeteor Meteor.bindEnvironment (groupName,isMember) ->
     if isMember
       Meteor.users.update userId, $addToSet: 'memberOf': groupName
@@ -150,16 +154,8 @@ Meteor.methods loginWithLdap: (request) ->
       Meteor.users.update userId, $pull: 'memberOf': groupName
       Meteor.users.update userId, $addToSet: 'notMemberOf': groupName
 
-  @setUserId userId
   {
-    id: userId
+    userId: userId
     token: stampedToken.token
-    tokenExpires: Accounts._tokenExpiration(stampedToken.when)
-  } 
-
-
-
-    
-  
-  # 4. update membership of groups
-
+    tokenExpires: Accounts._tokenExpiration(hashStampedToken.when)
+  }
