@@ -2,7 +2,7 @@ Package.describe({
   'summary': 'Meteor account login via LDAP',
   'version': '0.4.0',
   'git' : 'https://github.com/tdamsma/meteor-accounts-ldap',
-  'name' : 'tdamsma-accounts-ldap'
+  'name' : 'meteor-accounts-ldap'
 });
 
 Npm.depends({'activedirectory' : '0.6.3' , 'connect' : '2.19.3'});
