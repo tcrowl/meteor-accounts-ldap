@@ -1,11 +1,13 @@
 Accounts-Ldap
 ==
 ##Overview##
+a package to implement authentication against an LDAP server and retrieval of user attributes from that server in Meteor.js, using activedirectory.js for high level queries against LDP
 
+##Fork of hive:meteor-accounts-ldap##
 This is a fork from 'https://github.com/UK-AS-HIVE/meteor-accounts-ldap', a package to implement authentication against an LDAP server and retrieval of user attributes from that server in Meteor.js
 
 The main difference is that this package uses activedirectory.js in stead of ldapjs directly. This allows users to log in with e.g. their email or sAMAccountName. Also, this package supports recursive group queries. To support this, the  connection to the LDAP server is made using a set of bind credentials, and not the credentials provided by the user.
-
+==
 ##Installation##
 
 * meteor add tdamsma:accounts-ldap

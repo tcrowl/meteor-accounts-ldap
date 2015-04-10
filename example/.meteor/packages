@@ -5,5 +5,5 @@
 
 standard-app-packages
 insecure
-tdamsma-accounts-ldap
+tdamsma:meteor-accounts-ldap
 
