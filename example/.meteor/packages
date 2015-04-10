@@ -5,5 +5,5 @@
 
 standard-app-packages
 insecure
-hive:accounts-ldap
+tdamsma-accounts-ldap
 

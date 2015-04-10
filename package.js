@@ -1,11 +1,11 @@
 Package.describe({
   'summary': 'Meteor account login via LDAP',
-  'version': '0.3.0',
+  'version': '0.4.0',
   'git' : 'https://github.com/tdamsma/meteor-accounts-ldap',
-  'name' : 'hive:accounts-ldap'
+  'name' : 'tdamsma-accounts-ldap'
 });
 
-Npm.depends({'ldapjs' : '0.7.1', 'connect' : '2.19.3'});
+Npm.depends({'activedirectory' : '0.6.3' , 'connect' : '2.19.3'});
 
 Package.on_use(function (api) {
   api.use(['coffeescript','routepolicy', 'webapp'], 'server');

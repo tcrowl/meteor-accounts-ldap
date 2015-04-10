@@ -1,0 +1,1 @@
+meteor --port 3002 --settings config/settings.json
