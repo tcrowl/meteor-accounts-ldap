@@ -1,8 +1,15 @@
 {
-  "ldap": {
-    "serverDn": "DC=ad,DC=university,DC=edu",
-    "serverUrl": "ldap://ad.university.edu:2222",
-    "whiteListedFields": [ "displayName", "givenName", "department", "employeeNumber", "mail", "title", "address", "phone", "memberOf"],
-    "autopublishFields": [ "displayName", "department", "mail", "title", "address", "phone"]
-  }
+    "ldap": {
+        "domain": "vanoord.com",
+        "baseDn": "DC=ad,DC=university,DC=edu",
+        "url": "ldap://ad.university.edu:2222",
+        "bindCn": "CN=vo-srv-wepres,OU=Service Accounts,OU=Admin,OU=vanoord,DC=ballastham,DC=com",
+        "bindPassword": "((R0))09",
+        "autopublishFields": [ "displayName", "givenName", "department", "employeeNumber", "mail", "title", "address", "phone"],
+        "groupMembership": [
+            "Employees",
+            "Administrators",
+            "Editors"
+        ]
+    }
 }
