@@ -3,8 +3,6 @@ Future = Npm.require('fibers/future')
 assert = Npm.require('assert')
 
 console.log 'Doing ldap stuff'
-if !Meteor.settings.ldap
-  throw new Error('LDAP settings missing.')
 
 class UserQuery
   constructor: (username) -> 
