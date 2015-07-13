@@ -6,6 +6,9 @@ console.log 'Doing ldap stuff'
 
 class UserQuery
   constructor: (username) -> 
+    if !Meteor.settings.ldap
+      throw new Error('LDAP settings missing.')
+
     @ad = ActiveDirectory({
       url: Meteor.settings.ldap.url,
       baseDN: Meteor.settings.ldap.baseDn,
@@ -96,6 +99,9 @@ class UserQuery
     return isMemberFuture.wait()
 
   queryMembershipAndAddToMeteor: (callback) ->
+    if !Meteor.settings.ldap
+      throw new Error('LDAP settings missing.')
+
     for groupName in Meteor.settings.ldap.groupMembership
         ad = @ad
         userObj = @userObj
