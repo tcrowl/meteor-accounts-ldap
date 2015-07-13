@@ -31,6 +31,7 @@ class UserQuery
 
   findUser: () -> 
     userFuture = new Future
+    username = @username
 
     @ad.findUser @username, (err, userObj) ->
       if err
