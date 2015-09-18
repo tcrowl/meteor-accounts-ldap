@@ -1,10 +1,10 @@
 {
     "ldap": {
-        "domain": "vanoord.com",
+        "domain": "test.com",
         "baseDn": "DC=ad,DC=university,DC=edu",
         "url": "ldap://ad.university.edu:2222",
-        "bindCn": "CN=vo-srv-wepres,OU=Service Accounts,OU=Admin,OU=vanoord,DC=ballastham,DC=com",
-        "bindPassword": "((R0))09",
+        "bindCn": "CN=test,DC=com",
+        "bindPassword": "secret",
         "autopublishFields": [ "displayName", "givenName", "department", "employeeNumber", "mail", "title", "address", "phone"],
         "groupMembership": [
             "Employees",
