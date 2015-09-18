@@ -118,6 +118,7 @@ class UserQuery
 
 
 Accounts.registerLoginHandler 'ldap', (request) ->
+  return undefined if !request.ldap
   console.log 'Setting up LDAP connection'
   if !Meteor.settings.ldap
     throw new Error('LDAP settings missing.')
