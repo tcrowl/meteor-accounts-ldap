@@ -25,7 +25,7 @@ Template.ldapLogin.events({
 
 Meteor.loginWithLdap = function (username, password, callback) {
   Accounts.callLoginMethod({
-    methodArguments: [{username: username, password: password, ldap: true}],
+    methodArguments: [{username: username, pass: password, ldap: true}],
     validateResult: function (result) {
     },
     userCallback: callback
