@@ -130,13 +130,14 @@ Accounts.registerLoginHandler 'ldap', (request) ->
 
   user_query.findUser() # Allows both sAMAccountName and email
   # 2. authenticate user
-  authenticated = user_query.authenticate(request.password)
+  authenticated = user_query.authenticate(request.pass)
   
   console.log('* AUTENTICATED:',authenticated)
 
   # 3. update database
   userId = undefined
   userObj = user_query.userObj
+  userObj.username = request.username
   user = Meteor.users.findOne(dn: userObj.dn)
   if user
     userId = user._id
