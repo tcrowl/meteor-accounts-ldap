@@ -2,20 +2,18 @@ ActiveDirectory = Npm.require('activedirectory');
 Future = Npm.require('fibers/future')
 assert = Npm.require('assert')
 
-console.log 'Doing ldap stuff'
+if !Meteor.settings.ldap
+  throw new Error('"ldap" not found in Meteor.settings')
 
 class UserQuery
   constructor: (username) -> 
-    if !Meteor.settings.ldap
-      throw new Error('LDAP settings missing.')
-
     @ad = ActiveDirectory({
       url: Meteor.settings.ldap.url,
       baseDN: Meteor.settings.ldap.baseDn,
       username: Meteor.settings.ldap.bindCn,
       password: Meteor.settings.ldap.bindPassword
       attributes: {
-        user: Meteor.settings.ldap.autopublishFields,
+        user: ["dn"].concat(Meteor.settings.ldap.autopublishFields),
         }
        });
     @username = @sanitize_for_search(username)
@@ -35,14 +33,17 @@ class UserQuery
 
     @ad.findUser @username, (err, userObj) ->
       if err
-        console.log 'ERROR: ' + JSON.stringify(err)
+        if Meteor.settings.ldap.debug
+          console.log 'ERROR: ' + JSON.stringify(err)
         userFuture.return false
         return
       if !userObj
-        console.log 'User: ' + username + ' not found.'
+        if Meteor.settings.ldap.debug
+          console.log 'User: ' + username + ' not found.'
         userFuture.return false
       else
-        console.log JSON.stringify(userObj)
+        if Meteor.settings.ldap.debug
+          console.log JSON.stringify(userObj)
         userFuture.return userObj
 
     userObj = userFuture.wait()
@@ -55,14 +56,17 @@ class UserQuery
     authenticateFuture = new Future
     @ad.authenticate @userObj.dn, password, (err, auth) ->
       if err
-        console.log 'ERROR: ' + JSON.stringify(err)
+        if Meteor.settings.ldap.debug
+          console.log 'ERROR: ' + JSON.stringify(err)
         authenticateFuture.return false
         return
       if auth
-        console.log 'Authenticated!'
+        if Meteor.settings.ldap.debug
+          console.log 'Authenticated!'
         authenticateFuture.return true
       else
-        console.log 'Authentication failed!'
+        if Meteor.settings.ldap.debug
+          console.log 'Authentication failed!'
         authenticateFuture.return false 
       return
     success = authenticateFuture.wait() 
@@ -82,7 +86,8 @@ class UserQuery
         console.log('User: ' + @userObj.dn + ' not found.')
         groupsFuture.return false
       else 
-        console.log(JSON.stringify(groups))
+        if Meteor.settings.ldap.debug
+          console.log('Groups found for ' + @userObj.dn + ': '+ JSON.stringify(groups))
         groupsFuture.return groups
       return
     return groupsFuture.wait()
@@ -94,15 +99,13 @@ class UserQuery
         console.log 'ERROR: ' + JSON.stringify(err)
         isMemberFuture.return false
         return
-      console.log @userObj.displayName + ' isMemberOf ' + groupName + ': ' + isMember
+      if Meteor.settings.ldap.debug
+        console.log @userObj.displayName + ' isMemberOf ' + groupName + ': ' + isMember
       isMemberFuture.return isMember
       return
     return isMemberFuture.wait()
 
   queryMembershipAndAddToMeteor: (callback) ->
-    if !Meteor.settings.ldap
-      throw new Error('LDAP settings missing.')
-
     for groupName in Meteor.settings.ldap.groupMembership
         ad = @ad
         userObj = @userObj
@@ -110,29 +113,28 @@ class UserQuery
           ad.isUserMemberOf userObj.dn, groupName, (err, isMember) ->
             do (groupName) ->
               if err
-                console.log 'ERROR: ' + JSON.stringify(err)
+                if Meteor.settings.ldap.debug
+                  console.log 'ERROR: ' + JSON.stringify(err)
               else
-                console.log(groupName, 'isMemberOf', isMember)
+                if Meteor.settings.ldap.debug
+                  console.log userObj.dn + ' isMemberOf ' + groupName + ': ' + isMember
                 callback(groupName,isMember)
-          # console.log @userObj.dn + ' isMemberOf ' + groupName + ': ' + isMember
 
 
 Accounts.registerLoginHandler 'ldap', (request) ->
   return undefined if !request.ldap
-  console.log 'Setting up LDAP connection'
-  if !Meteor.settings.ldap
-    throw new Error('LDAP settings missing.')
 
   # 1. create query
   user_query = new UserQuery(request.username)
-
-  console.log 'LDAP authentication for ' + request.username
+  if Meteor.settings.ldap.debug
+    console.log 'LDAP authentication for ' + request.username
 
   user_query.findUser() # Allows both sAMAccountName and email
+
   # 2. authenticate user
   authenticated = user_query.authenticate(request.pass)
-  
-  console.log('* AUTENTICATED:',authenticated)
+  if Meteor.settings.ldap.debug
+    console.log('* AUTENTICATED:',authenticated)
 
   # 3. update database
   userId = undefined
