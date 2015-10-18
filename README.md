@@ -13,7 +13,7 @@ Usage
 
 ##Installation##
 
-* meteor add tdamsma:accounts-ldap
+* `meteor add tdamsma:meteor-accounts-ldap`
 
 ##Configuration##
 Your server's URL and a DN to search will need to be set in a settings.json file as `url` and `baseDn`, respectively. Furthermore, account settings must be provided for a connection to the LDAP server to perform queries, width 'bindCn' and 'bindPassword'. You can select an array of `autopublishFields` from an LDAP search to add to the user object in Meteor.users. 
