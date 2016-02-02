@@ -72,7 +72,7 @@ class UserQuery
     success = authenticateFuture.wait() 
     if not success or password == ''
       throw new (Meteor.Error)(403, 'Invalid credentials')
-    @autenticated = success
+    @authenticated = success
     return success
 
   getGroupMembershipForUser: () ->
@@ -134,7 +134,7 @@ Accounts.registerLoginHandler 'ldap', (request) ->
   # 2. authenticate user
   authenticated = user_query.authenticate(request.pass)
   if Meteor.settings.ldap.debug
-    console.log('* AUTENTICATED:',authenticated)
+    console.log('* AUTHENTICATED:',authenticated)
 
   # 3. update database
   userId = undefined
