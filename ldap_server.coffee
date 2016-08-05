@@ -14,7 +14,8 @@ class UserQuery
       password: Meteor.settings.ldap.bindPassword
       attributes: {
         user: ["dn"].concat(Meteor.settings.ldap.autopublishFields),
-        }
+        },
+      tlsOptions: Meteor.settings.ldap.tlsOptions || {}
        });
     @username = @sanitize_for_search(username)
 
