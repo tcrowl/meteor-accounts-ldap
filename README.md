@@ -1,3 +1,7 @@
+Abandoned
+==
+Please note that while I believe this package works as is, I am not using it myself at the moment. So effectively it is abandoned. I'll accept PR's if they seem ok, but can't do a thourough test/review. If anyone wants to take over or help me with setting up some tests, let me know. 
+
 Accounts-Ldap
 ==
 ##Overview##
